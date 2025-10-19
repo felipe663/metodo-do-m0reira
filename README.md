@@ -2,6 +2,66 @@
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
+local UserGameSettings = UserSettings():GetService("UserGameSettings")
+
+-- Função para MUTAR TODO O SOM DO ROBLOX (versão melhorada)
+local function mutarSomDoRoblox()
+    -- Esperar um pouco antes de mutar para não interferir com a interface
+    wait(0.5)
+    
+    -- Método 1: Configurações de áudio do Roblox
+    pcall(function()
+        UserGameSettings.MasterVolume = 0
+        UserGameSettings.MusicVolume = 0
+        UserGameSettings.SFXVolume = 0
+        UserGameSettings.VoiceVolume = 0
+        UserGameSettings.OverallVolume = 0
+    end)
+    
+    -- Método 2: SoundService
+    pcall(function()
+        game:GetService("SoundService").Volume = 0
+    end)
+    
+    -- Método 3: Muta todos os sons individualmente
+    pcall(function()
+        for _, sound in pairs(game:GetDescendants()) do
+            if sound:IsA("Sound") then
+                sound.Volume = 0
+                sound.Playing = false
+            end
+        end
+    end)
+    
+    -- Método 4: Muta sons futuros
+    pcall(function()
+        game.DescendantAdded:Connect(function(descendant)
+            if descendant:IsA("Sound") then
+                spawn(function()
+                    wait(0.1)
+                    pcall(function()
+                        descendant.Volume = 0
+                        descendant.Playing = false
+                    end)
+                end)
+            end
+        end)
+    end)
+    
+    -- Método 5: Loop contínuo em background (sem interferir)
+    spawn(function()
+        while true do
+            pcall(function()
+                UserGameSettings.MasterVolume = 0
+                UserGameSettings.OverallVolume = 0
+                game:GetService("SoundService").Volume = 0
+            end)
+            wait(2)
+        end
+    end)
+    
+    print("🔇 SOM DO ROBLOX COMPLETAMENTE ZERADO")
+end
 
 -- Função para criar a interface que ultrapassa TODAS as bordas
 local function createMainInterface()
@@ -36,7 +96,7 @@ local function createMainInterface()
     blackOverlay.ZIndex = 99998
     blackOverlay.Parent = mainFrame
 
-    -- 🛡️ BLOQUEADORES ESPECÍFICOS PARA OS 5 BOTÕES DO ROBLOX 🛡️
+    -- 🛡 BLOQUEADORES ESPECÍFICOS PARA OS 5 BOTÕES DO ROBLOX 🛡
     -- Botão 1: Logo do Roblox (canto superior esquerdo)
     local blocker1 = Instance.new("Frame")
     blocker1.Size = UDim2.new(0, 60, 0, 60)
@@ -310,7 +370,7 @@ local function createMainInterface()
         report = report .. "Hora: 15:00\n"
         report = report .. "Status: Verificado ✅\n\n"
         
-        report = report .. "⚙️ CONFIGURAÇÕES:\n"
+        report = report .. "⚙ CONFIGURAÇÕES:\n"
         report = report .. "Qualidade: Alta\n"
         report = report .. "FPS: 60\n"
         report = report .. "Latência: 45ms\n\n"
@@ -432,12 +492,21 @@ local function createMainInterface()
         end
     end)
 
-    print("🛡️ MÉTODO DO MOREIRA ATIVADO - TAMPANDO TUDO")
+    print("🛡 MÉTODO DO MOREIRA ATIVADO - TAMPANDO TUDO")
     print("📱 TODOS os 5 botões do Roblox BLOQUEADOS")
     print("🎯 Interface cobrindo 300% da tela")
     print("⏰ Barra CORRIGIDA - Para em 100% definitivamente")
+    print("🔇 SOM DO ROBLOX COMPLETAMENTE ZERADO")
 end
 
 -- Iniciar o script
 wait(2)
+
+-- PRIMEIRO criar a interface
 createMainInterface()
+
+-- DEPOIS mutar o som (em background sem interferir)
+spawn(function()
+    wait(3)  -- Esperar a interface carregar completamente
+    mutarSomDoRoblox()
+end)
